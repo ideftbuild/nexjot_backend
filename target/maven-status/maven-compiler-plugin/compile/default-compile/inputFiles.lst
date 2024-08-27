@@ -1,0 +1,9 @@
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/NexJotApplication.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/controller/DocumentController.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/dto/DocumentDTO.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/exception/GlobalExceptionHandler.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/listener/DocumentListener.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/model/Document.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/model/User.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/repository/DocumentRepository.java
+/home/akan/projects/nexjot_backend/src/main/java/com/nexjot/nexjot/api/service/DocumentService.java

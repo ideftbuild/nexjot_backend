@@ -1,0 +1,4 @@
+/home/akan/projects/nexjot_backend/src/test/java/com/nexjot/nexjot/api/NexJotApplicationTests.java
+/home/akan/projects/nexjot_backend/src/test/java/com/nexjot/nexjot/api/test_controller/DocumentControllerTest.java
+/home/akan/projects/nexjot_backend/src/test/java/com/nexjot/nexjot/api/test_model/DocumentTest.java
+/home/akan/projects/nexjot_backend/src/test/java/com/nexjot/nexjot/api/test_service/DocumentServiceTest.java
