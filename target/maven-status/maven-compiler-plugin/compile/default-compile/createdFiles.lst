@@ -1,0 +1,8 @@
+com/nexjot/nexjot/api/service/DocumentService.class
+com/nexjot/nexjot/api/listener/DocumentListener.class
+com/nexjot/nexjot/api/model/Document.class
+com/nexjot/nexjot/api/model/User.class
+com/nexjot/nexjot/api/controller/DocumentController.class
+com/nexjot/nexjot/api/dto/DocumentDTO.class
+com/nexjot/nexjot/api/NexJotApplication.class
+com/nexjot/nexjot/api/repository/DocumentRepository.class
