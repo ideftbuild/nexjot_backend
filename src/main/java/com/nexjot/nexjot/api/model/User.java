@@ -45,7 +45,6 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", documentCount=" + (documents == null || documents.isEmpty() ? "null" : documents.size()) +
                 '}';
     }
 
