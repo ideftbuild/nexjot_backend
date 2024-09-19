@@ -1,10 +1,16 @@
 package com.nexjot.nexjot.api.security.controller;
 
-import org.springframework.stereotype.Controller;
+import com.nexjot.nexjot.api.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 public class AuthController {
+
+    private final UserService userService;
+
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     /**
      * Redirects the user to the frontend upon successful authentication.
@@ -13,5 +19,10 @@ public class AuthController {
     @GetMapping("/oauth2/authorize/google")
     public String handleGoogleLogin() {
         return "redirect:http://localhost:5173/oauth2/redirect";
+    }
+
+    @GetMapping("/api/user")
+    public String getUser() {
+        return "username=" + userService.getCurrentAuthUser().getUsername();
     }
 }
