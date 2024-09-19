@@ -7,25 +7,26 @@ package com.nexjot.nexjot.api.model;
 import com.nexjot.nexjot.api.listener.DocumentListener;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 /**
  * Document model class
  * This class represents the document entity in the database
- * It contains the document's title, content, owner_id, users, createdAt, and updatedAt
+ * It contains the document's title, content, owner, users, createdAt, and updatedAt
  * It also contains the necessary methods to add and remove users from the document
  * It also contains the necessary annotations to map the document entity to the database
  */
 @Entity
 @Table(name = "documents")
 @EntityListeners(DocumentListener.class)
+@AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
+@Builder
 public class Document {
 
     @Id
@@ -37,7 +38,9 @@ public class Document {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    private UUID owner_id;
+    @ManyToOne
+    @JoinColumn(name = "owner", nullable=false)
+    private User owner;
 
     @ManyToMany(mappedBy = "documents")
     private Set<User> users;
@@ -45,12 +48,16 @@ public class Document {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Document (String title, String content, UUID owner_id) {
+    public Document (String title, String content, User owner) {
         this.title = title;
         this.content = content;
-        this.owner_id = owner_id;
+        this.owner = owner;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, content);
+    }
     /**
      * Add a user to the document
      * @param user the user to be added
@@ -75,8 +82,7 @@ public class Document {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
-                ", owner_id=" + owner_id +
-                ", userCount=" + (users == null || users.isEmpty() ? "null" : users.size()) +
+                ", owner=" + owner.getId() +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

@@ -4,17 +4,19 @@
  */
 package com.nexjot.nexjot.api.controller;
 
-import com.nexjot.nexjot.api.dto.DocumentDTO;
-import com.nexjot.nexjot.api.model.Document;
+import com.nexjot.nexjot.api.dto.document.CreateDocumentDTO;
+import com.nexjot.nexjot.api.dto.document.DocumentDTO;
+import com.nexjot.nexjot.api.dto.document.UpdateDocumentDTO;
 import com.nexjot.nexjot.api.service.DocumentService;
 import jakarta.validation.Valid;
-import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Controller class for managing documents.
@@ -34,93 +36,70 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
-    /**
+    /**?
      * Creates a new document.
      *
-     * @param documentDTO the data transfer object containing document details
+     * @param docDTO the data transfer object containing document details
      * @return the created document
      */
     @PostMapping("/documents")
-    public ResponseEntity<Document> createDocument(
-            @Valid @RequestBody DocumentDTO documentDTO) {
-        Document document = new Document(
-                documentDTO.getTitle(),
-                documentDTO.getContent(),
-                documentDTO.getOwner_id());
-        Document savedDocument = documentService.save(document);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDocument);
+    public ResponseEntity<DocumentDTO> createDocument(
+            @Valid @RequestBody CreateDocumentDTO docDTO) {
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(documentService.create(docDTO));
     }
 
     /**
-     * Retrieves a document by its ID.
+     * Retrieve User's document by its ID.
      *
-     * @param id the ID of the document
-     * @return the document if found, otherwise a 404 status
+     * @param id the ID of the document to retrieve
+     * @return the document
      */
     @GetMapping("/documents/{id}")
-    public ResponseEntity<?> getDocument(@PathVariable UUID id) {
-        Document document = documentService.getDocumentById(id);
-        if (document == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).
-                    body("Document Not Found");
-        }
-        return ResponseEntity.ok(document);
+    public ResponseEntity<DocumentDTO> getDocument(@PathVariable UUID id) {
+        return ResponseEntity.ok(documentService.getDocument(id));
     }
 
     /**
-     * Retrieves all documents.
-     *
-     * @return a list of all documents
+     * Retrieve User's documents
+     * @return the list of documents
      */
     @GetMapping("/documents")
-    public ResponseEntity<List<Document>> getDocuments() {
-        List<Document> documents = documentService.getDocuments();
-        return ResponseEntity.ok(documents);
+    public ResponseEntity<List<DocumentDTO>> getDocuments() {
+        return ResponseEntity.ok(documentService.getDocumentsByOwner());
     }
 
     /**
-     * Updates an existing document.
-     *
+     * Retrieve User's documents as a preview
+     * @return the list of documents
+     */
+    @GetMapping("/documents/preview")
+    public ResponseEntity<List<DocumentDTO>> getDocumentsPreview()  {
+        return ResponseEntity.ok(documentService.getDocumentsPreviewByOwner());
+    }
+
+    /**
+     * Update User's document by its ID.
+     * @param docDTO the data transfer object containing document details
      * @param id the ID of the document to update
-     * @param documentDTO the data transfer object containing updated document details
-     * @return the updated document if found, otherwise a 404 status
+     * @return the updated document
      */
     @PutMapping("/documents/{id}")
-    public ResponseEntity<?> updateDocument(
-            @PathVariable UUID id, @RequestBody DocumentDTO documentDTO) {
-        Document document = documentService.getDocumentById(id);
-        // Check if the document exists
-        if (document == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).
-                    body("Document Not Found");
-        }
-        // Update the document
-        if (documentDTO.getTitle() != null && !documentDTO.getTitle().isEmpty()) {
-            document.setTitle(documentDTO.getTitle());
-        }
-        if (documentDTO.getContent() != null && !documentDTO.getContent().isEmpty()) {
-            document.setContent(documentDTO.getContent());
-        }
-        documentService.save(document); // save the updated document
-        return ResponseEntity.ok(document);
+    public ResponseEntity<DocumentDTO> updateDocument(
+            @Valid @RequestBody UpdateDocumentDTO docDTO, @PathVariable UUID id) {
+        return ResponseEntity.ok(documentService.updateDocument(docDTO, id));
     }
 
     /**
-     * Deletes a document by its ID.
+     * Delete User's document by its ID.
      *
      * @param id the ID of the document to delete
-     * @return a 204 status if the document is deleted, otherwise a 404 status
+     * @return No content
      */
     @DeleteMapping("/documents/{id}")
     public ResponseEntity<String> deleteDocument(@PathVariable UUID id) {
-        Document document = documentService.getDocumentById(id); // Check if the document exists
-
-        if (document == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).
-                    body("Document Not Found");
-        }
-
-        documentService.delete(document); // Delete the document
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        documentService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
