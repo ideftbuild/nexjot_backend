@@ -36,7 +36,7 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
-    /**?
+    /**
      * Creates a new document.
      *
      * @param docDTO the data transfer object containing document details
