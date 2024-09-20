@@ -37,7 +37,12 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
-                        ))
+                        )
+//                        .loginPage("http://localhost:5173/login")  Enable this if you want to redirect to a custom login page
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("http://localhost:5173/login")
+                )
         ;
 
         return http.build();
