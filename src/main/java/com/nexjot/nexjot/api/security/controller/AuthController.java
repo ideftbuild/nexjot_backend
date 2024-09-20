@@ -1,15 +1,19 @@
 package com.nexjot.nexjot.api.security.controller;
 
-import com.nexjot.nexjot.api.service.UserService;
+import com.nexjot.nexjot.api.security.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 public class AuthController {
 
-    private final UserService userService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    @Autowired
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     /**
@@ -18,11 +22,14 @@ public class AuthController {
      */
     @GetMapping("/oauth2/authorize/google")
     public String handleGoogleLogin() {
+        System.out.println("accessing the endpoint, redirecting the user");
         return "redirect:http://localhost:5173/oauth2/redirect";
     }
 
-    @GetMapping("/api/user")
-    public String getUser() {
-        return "username=" + userService.getCurrentAuthUser().getUsername();
+    @GetMapping("/auth/status")
+    public ResponseEntity<String> apiStatus() {
+        String message = "User is not authenticated";
+        if (authService.isAuthenticated()) message = "User is authenticated";
+        return ResponseEntity.ok(message);
     }
 }

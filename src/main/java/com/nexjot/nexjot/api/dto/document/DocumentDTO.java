@@ -6,6 +6,7 @@ package com.nexjot.nexjot.api.dto.document;
 
 import com.nexjot.nexjot.api.dto.user.UserDTO;
 import com.nexjot.nexjot.api.model.User;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
@@ -25,14 +26,14 @@ import lombok.*;
 public class DocumentDTO {
     @NotNull
     private UUID id;
-    @NotNull
+    @NotBlank
     private String title;
     private String content;
-    @NotNull
+    @NotBlank
     private UserDTO owner;
-    @NotNull
+    @NotBlank
     private LocalDateTime createdAt;
-    @NotNull
+    @NotBlank
     private LocalDateTime updatedAt;
 
     private Set<User> users;

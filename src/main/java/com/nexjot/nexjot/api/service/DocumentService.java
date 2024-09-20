@@ -17,6 +17,7 @@ import com.nexjot.nexjot.api.repository.DocumentRepository;
 import java.util.List;
 import java.util.UUID;
 
+import com.nexjot.nexjot.api.security.service.AuthService;
 import com.nexjot.nexjot.api.utility.StringSlicer;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Service;
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
-    private final UserService userService;
+    private final AuthService authService;
 
     /**
      * Constructor for DocumentService.
@@ -39,9 +40,9 @@ public class DocumentService {
      * @param documentRepository the repository for managing documents
      */
     @Autowired
-    DocumentService(DocumentRepository documentRepository, UserService userService) {
+    DocumentService(DocumentRepository documentRepository, AuthService authService) {
         this.documentRepository = documentRepository;
-        this.userService = userService;
+        this.authService = authService;
     }
 
     /**
@@ -57,7 +58,7 @@ public class DocumentService {
         }
         try {
             doc = DocumentMapper.INSTANCE.toEntity(docDTO);
-            doc.setOwner(userService.getCurrentAuthUser());
+            doc.setOwner(authService.getAuthUser());
             doc = documentRepository.save(doc);
         } catch (Exception e) {
             throw new DocumentCreationException("Document not created");
@@ -72,7 +73,7 @@ public class DocumentService {
      */
     public DocumentDTO getDocument(UUID id) {
         Document document = documentRepository.findByIdAndOwner(
-                        id, userService.getCurrentAuthUser())
+                        id, authService.getAuthUser())
                 .orElseThrow(() -> new DocumentNotFoundException("Documents not found"));
         return DocumentMapper.INSTANCE.toDTO(document);
     }
@@ -81,8 +82,9 @@ public class DocumentService {
      * Retrieves all documents by their owner.
      * @return list of documents
      */
+    @Transactional
     public List<DocumentDTO> getDocumentsByOwner() {
-        return documentRepository.findByOwner(userService.getCurrentAuthUser())
+        return documentRepository.findByOwner(authService.getAuthUser())
                 .orElseThrow(() -> new DocumentNotFoundException("Documents not found"))
                 .stream().map(DocumentMapper.INSTANCE::toDTO)
                 .toList();
@@ -92,12 +94,13 @@ public class DocumentService {
      * Retrieves all documents preview by their owner.
      * @return list of documents preview
      */
+    @Transactional
     public List<DocumentDTO> getDocumentsPreviewByOwner() {
-        return documentRepository.findByOwner(userService.getCurrentAuthUser())
+        return documentRepository.findByOwner(authService.getAuthUser())
                 .orElseThrow(() -> new DocumentNotFoundException("Document not found"))
                 .stream()
                 .map((doc) -> {
-                    doc.setTitle(StringSlicer.sliceString(doc.getTitle(), 40).strip());
+                    doc.setTitle(StringSlicer.sliceString(doc.getTitle(), 50).strip());
                     doc.setContent(StringSlicer.sliceString(doc.getContent(), 60).strip());
                     return DocumentMapper.INSTANCE.toDTO(doc);
                 })
@@ -110,8 +113,9 @@ public class DocumentService {
      * @param id the id of the document to update
      * @return the updated document DTO
      */
+    @Transactional
     public DocumentDTO updateDocument(UpdateDocumentDTO docDTO, UUID id) {
-        Document document = documentRepository.findByIdAndOwner(id, userService.getCurrentAuthUser())
+        Document document = documentRepository.findByIdAndOwner(id, authService.getAuthUser())
                 .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
 
         document.setTitle(docDTO.getTitle());
@@ -128,7 +132,7 @@ public class DocumentService {
      */
     @Transactional
     public void delete(UUID id) {
-        User owner = userService.getCurrentAuthUser();
+        User owner = authService.getAuthUser();
         if (!documentRepository.existsByIdAndOwner(id, owner)) {
             throw new DocumentNotFoundException("Document not found");
         }

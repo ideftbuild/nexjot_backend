@@ -16,7 +16,7 @@ public interface DocumentMapper {
 
     @Mapping(source = "owner", target = "owner")
     DocumentDTO toDTO(Document document);
-    @Mapping(source = "owner", target = "owner")
+//    @Mapping(source = "owner", target = "owner")
 //    Document toEntity(DocumentDTO docDTO);
 //    CreateDocumentDTO toCreateDTO(Document document);
     Document toEntity(CreateDocumentDTO createDocDTO);

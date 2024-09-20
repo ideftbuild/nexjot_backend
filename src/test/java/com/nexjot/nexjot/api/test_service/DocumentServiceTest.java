@@ -10,8 +10,8 @@ import com.nexjot.nexjot.api.dto.document.UpdateDocumentDTO;
 import com.nexjot.nexjot.api.model.Document;
 import com.nexjot.nexjot.api.model.User;
 import com.nexjot.nexjot.api.repository.DocumentRepository;
+import com.nexjot.nexjot.api.security.service.AuthService;
 import com.nexjot.nexjot.api.service.DocumentService;
-import com.nexjot.nexjot.api.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -37,7 +37,7 @@ public class DocumentServiceTest {
     private DocumentRepository documentRepository;
 
     @Mock
-    private UserService userService;
+    private AuthService authService;
 
     private User owner;
 
@@ -52,7 +52,7 @@ public class DocumentServiceTest {
             throw new RuntimeException(e);
         }
         owner = mock(User.class);
-        when(userService.getCurrentAuthUser()).thenReturn(owner);
+        when(authService.getAuthUser()).thenReturn(owner);
     }
 
     /**
@@ -128,12 +128,12 @@ public class DocumentServiceTest {
                     .build()
         );
 
-        when(userService.getCurrentAuthUser()).thenReturn(owner);
+        when(authService.getAuthUser()).thenReturn(owner);
         when(documentRepository.findByOwner(owner)).thenReturn(Optional.of(mockDocuments));
 
         List<DocumentDTO> docDTOs = documentService.getDocumentsPreviewByOwner();
 
-        assertTrue(docDTOs.get(0).getTitle().length() <= 40);
+        assertTrue(docDTOs.get(0).getTitle().length() <= 50);
         assertTrue(docDTOs.get(0).getContent().length() <= 60);
         assertEquals(docDTOs.get(1).getTitle(), "Testing title");
         assertEquals(docDTOs.get(1).getContent(), "This is some random words");
