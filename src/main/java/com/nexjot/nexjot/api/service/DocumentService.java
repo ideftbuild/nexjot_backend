@@ -117,11 +117,17 @@ public class DocumentService {
     public DocumentDTO updateDocument(UpdateDocumentDTO docDTO, UUID id) {
         Document document = documentRepository.findByIdAndOwner(id, authService.getAuthUser())
                 .orElseThrow(() -> new DocumentNotFoundException("Document not found"));
+        System.out.println("document found => " + document);
 
-        document.setTitle(docDTO.getTitle());
-        document.setContent(docDTO.getContent());
+        if (docDTO.getTitle() != null) {
+            document.setTitle(docDTO.getTitle());
+        }
+        if (docDTO.getContent() != null) {
+            document.setContent(docDTO.getContent().equals("__EMPTY__") ? "" : docDTO.getContent());
+        }
 
         document = documentRepository.save(document);
+        System.out.println("updated document => " + document);
         return DocumentMapper.INSTANCE.toDTO(document);
     }
 
